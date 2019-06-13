@@ -1,30 +1,262 @@
 package gredis
 
-import (
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/container/gmap"
-)
-
-type Params interface {
-	get() interface{}
-	add(name string, value interface{})
-	contains(name string)
-}
-
 const (
 	XX = "xx"
 	NX = "nx"
 	PX = "px"
 	EX = "ex"
+
+	MATCH = "match"
+	COUNT = "count"
+)
+
+// all redis commands
+const (
+	PING                 = "PING"
+	SET                  = "SET"
+	GET                  = "GET"
+	QUIT                 = "QUIT"
+	EXISTS               = "EXISTS"
+	DEL                  = "DEL"
+	UNLINK               = "UNLINK"
+	TYPE                 = "TYPE"
+	FLUSHDB              = "FLUSHDB"
+	KEYS                 = "KEYS"
+	RANDOMKEY            = "RANDOMKEY"
+	RENAME               = "RENAME"
+	RENAMENX             = "RENAMENX"
+	RENAMEX              = "RENAMEX"
+	DBSIZE               = "DBSIZE"
+	EXPIRE               = "EXPIRE"
+	EXPIREAT             = "EXPIREAT"
+	TTL                  = "TTL"
+	SELECT               = "SELECT"
+	MOVE                 = "MOVE"
+	FLUSHALL             = "FLUSHALL"
+	GETSET               = "GETSET"
+	MGET                 = "MGET"
+	SETNX                = "SETNX"
+	SETEX                = "SETEX"
+	MSET                 = "MSET"
+	MSETNX               = "MSETNX"
+	DECRBY               = "DECRBY"
+	DECR                 = "DECR"
+	INCRBY               = "INCRBY"
+	INCR                 = "INCR"
+	APPEND               = "APPEND"
+	SUBSTR               = "SUBSTR"
+	HSET                 = "HSET"
+	HGET                 = "HGET"
+	HSETNX               = "HSETNX"
+	HMSET                = "HMSET"
+	HMGET                = "HMGET"
+	HINCRBY              = "HINCRBY"
+	HEXISTS              = "HEXISTS"
+	HDEL                 = "HDEL"
+	HLEN                 = "HLEN"
+	HKEYS                = "HKEYS"
+	HVALS                = "HVALS"
+	HGETALL              = "HGETALL"
+	RPUSH                = "RPUSH"
+	LPUSH                = "LPUSH"
+	LLEN                 = "LLEN"
+	LRANGE               = "LRANGE"
+	LTRIM                = "LTRIM"
+	LINDEX               = "LINDEX"
+	LSET                 = "LSET"
+	LREM                 = "LREM"
+	LPOP                 = "LPOP"
+	RPOP                 = "RPOP"
+	RPOPLPUSH            = "RPOPLPUSH"
+	SADD                 = "SADD"
+	SMEMBERS             = "SMEMBERS"
+	SREM                 = "SREM"
+	SPOP                 = "SPOP"
+	SMOVE                = "SMOVE"
+	SCARD                = "SCARD"
+	SISMEMBER            = "SISMEMBER"
+	SINTER               = "SINTER"
+	SINTERSTORE          = "SINTERSTORE"
+	SUNION               = "SUNION"
+	SUNIONSTORE          = "SUNIONSTORE"
+	SDIFF                = "SDIFF"
+	SDIFFSTORE           = "SDIFFSTORE"
+	SRANDMEMBER          = "SRANDMEMBER"
+	ZADD                 = "ZADD"
+	ZRANGE               = "ZRANGE"
+	ZREM                 = "ZREM"
+	ZINCRBY              = "ZINCRBY"
+	ZRANK                = "ZRANK"
+	ZREVRANK             = "ZREVRANK"
+	ZREVRANGE            = "ZREVRANGE"
+	ZCARD                = "ZCARD"
+	ZSCORE               = "ZSCORE"
+	MULTI                = "MULTI"
+	DISCARD              = "DISCARD"
+	EXEC                 = "EXEC"
+	WATCH                = "WATCH"
+	UNWATCH              = "UNWATCH"
+	SORT                 = "SORT"
+	BLPOP                = "BLPOP"
+	BRPOP                = "BRPOP"
+	AUTH                 = "AUTH"
+	SUBSCRIBE            = "SUBSCRIBE"
+	PUBLISH              = "PUBLISH"
+	UNSUBSCRIBE          = "UNSUBSCRIBE"
+	PSUBSCRIBE           = "PSUBSCRIBE"
+	PUNSUBSCRIBE         = "PUNSUBSCRIBE"
+	PUBSUB               = "PUBSUB"
+	ZCOUNT               = "ZCOUNT"
+	ZRANGEBYSCORE        = "ZRANGEBYSCORE"
+	ZREVRANGEBYSCORE     = "ZREVRANGEBYSCORE"
+	ZREMRANGEBYRANK      = "ZREMRANGEBYRANK"
+	ZREMRANGEBYSCORE     = "ZREMRANGEBYSCORE"
+	ZUNIONSTORE          = "ZUNIONSTORE"
+	ZINTERSTORE          = "ZINTERSTORE"
+	ZLEXCOUNT            = "ZLEXCOUNT"
+	ZRANGEBYLEX          = "ZRANGEBYLEX"
+	ZREVRANGEBYLEX       = "ZREVRANGEBYLEX"
+	ZREMRANGEBYLEX       = "ZREMRANGEBYLEX"
+	SAVE                 = "SAVE"
+	BGSAVE               = "BGSAVE"
+	BGREWRITEAOF         = "BGREWRITEAOF"
+	LASTSAVE             = "LASTSAVE"
+	SHUTDOWN             = "SHUTDOWN"
+	INFO                 = "INFO"
+	MONITOR              = "MONITOR"
+	SLAVEOF              = "SLAVEOF"
+	CONFIG               = "CONFIG"
+	STRLEN               = "STRLEN"
+	SYNC                 = "SYNC"
+	LPUSHX               = "LPUSHX"
+	PERSIST              = "PERSIST"
+	RPUSHX               = "RPUSHX"
+	ECHO                 = "ECHO"
+	LINSERT              = "LINSERT"
+	DEBUG                = "DEBUG"
+	BRPOPLPUSH           = "BRPOPLPUSH"
+	SETBIT               = "SETBIT"
+	GETBIT               = "GETBIT"
+	BITPOS               = "BITPOS"
+	SETRANGE             = "SETRANGE"
+	GETRANGE             = "GETRANGE"
+	EVAL                 = "EVAL"
+	EVALSHA              = "EVALSHA"
+	SCRIPT               = "SCRIPT"
+	SLOWLOG              = "SLOWLOG"
+	OBJECT               = "OBJECT"
+	BITCOUNT             = "BITCOUNT"
+	BITOP                = "BITOP"
+	SENTINEL             = "SENTINEL"
+	DUMP                 = "DUMP"
+	RESTORE              = "RESTORE"
+	PEXPIRE              = "PEXPIRE"
+	PEXPIREAT            = "PEXPIREAT"
+	PTTL                 = "PTTL"
+	INCRBYFLOAT          = "INCRBYFLOAT"
+	PSETEX               = "PSETEX"
+	CLIENT               = "CLIENT"
+	TIME                 = "TIME"
+	MIGRATE              = "MIGRATE"
+	HINCRBYFLOAT         = "HINCRBYFLOAT"
+	SCAN                 = "SCAN"
+	HSCAN                = "HSCAN"
+	SSCAN                = "SSCAN"
+	ZSCAN                = "ZSCAN"
+	WAIT                 = "WAIT"
+	CLUSTER              = "CLUSTER"
+	ASKING               = "ASKING"
+	PFADD                = "PFADD"
+	PFCOUNT              = "PFCOUNT"
+	PFMERGE              = "PFMERGE"
+	READONLY             = "READONLY"
+	GEOADD               = "GEOADD"
+	GEODIST              = "GEODIST"
+	GEOHASH              = "GEOHASH"
+	GEOPOS               = "GEOPOS"
+	GEORADIUS            = "GEORADIUS"
+	GEORADIUS_RO         = "GEORADIUS_RO"
+	GEORADIUSBYMEMBER    = "GEORADIUSBYMEMBER"
+	GEORADIUSBYMEMBER_RO = "GEORADIUSBYMEMBER_RO"
+	MODULE               = "MODULE"
+	BITFIELD             = "BITFIELD"
+	HSTRLEN              = "HSTRLEN"
+	TOUCH                = "TOUCH"
+	SWAPDB               = "SWAPDB"
+	MEMORY               = "MEMORY"
+	XADD                 = "XADD"
+	XLEN                 = "XLEN"
+	XDEL                 = "XDEL"
+	XTRIM                = "XTRIM"
+	XRANGE               = "XRANGE"
+	XREVRANGE            = "XREVRANGE"
+	XREAD                = "XREAD"
+	XACK                 = "XACK"
+	XGROUP               = "XGROUP"
+	XREADGROUP           = "XREADGROUP"
+	XPENDING             = "XPENDING"
+	XCLAIM               = "XCLAIM"
+)
+
+// redis key words
+const (
+	AGGREGATE   = "AGGREGATE"
+	ALPHA       = "ALPHA"
+	ASC         = "ASC"
+	BY          = "BY"
+	DESC        = "DESC"
+	LIMIT       = "LIMIT"
+	MESSAGE     = "MESSAGE"
+	NO          = "NO"
+	NOSORT      = "NOSORT"
+	PMESSAGE    = "PMESSAGE"
+	OK          = "OK"
+	ONE         = "ONE"
+	QUEUED      = "QUEUED"
+	STORE       = "STORE"
+	WEIGHTS     = "WEIGHTS"
+	WITHSCORES  = "WITHSCORES"
+	RESETSTAT   = "RESETSTAT"
+	REWRITE     = "REWRITE"
+	RESET       = "RESET"
+	FLUSH       = "FLUSH"
+	LOAD        = "LOAD"
+	KILL        = "KILL"
+	LEN         = "LEN"
+	REFCOUNT    = "REFCOUNT"
+	ENCODING    = "ENCODING"
+	IDLETIME    = "IDLETIME"
+	GETNAME     = "GETNAME"
+	SETNAME     = "SETNAME"
+	LIST        = "LIST"
+	PONG        = "PONG"
+	UNLOAD      = "UNLOAD"
+	REPLACE     = "REPLACE"
+	PAUSE       = "PAUSE"
+	DOCTOR      = "DOCTOR"
+	BLOCK       = "BLOCK"
+	NOACK       = "NOACK"
+	STREAMS     = "STREAMS"
+	KEY         = "KEY"
+	CREATE      = "CREATE"
+	MKSTREAM    = "MKSTREAM"
+	SETID       = "SETID"
+	DESTROY     = "DESTROY"
+	DELCONSUMER = "DELCONSUMER"
+	MAXLEN      = "MAXLEN"
+	GROUP       = "GROUP"
+	IDLE        = "IDLE"
+	RETRYCOUNT  = "RETRYCOUNT"
+	FORCE       = "FORCE"
 )
 
 type SetParams struct {
-	params g.Map
+	params map[string]interface{}
 }
 
 func NewSetParams() *SetParams {
 	return &SetParams{
-		params: make(g.Map),
+		params: make(map[string]interface{}),
 	}
 }
 
@@ -62,8 +294,29 @@ func (p SetParams) xx() {
 	p.params[XX] = true
 }
 
+type ScanParams struct {
+	params map[string]interface{}
+}
+
+func (p ScanParams) match(pattern string) {
+	p.params[MATCH] = pattern
+}
+
+func (p ScanParams) count(count int) {
+	p.params[COUNT] = count
+}
+
+func (p ScanParams) GetParams() []interface{} {
+	arr := make([]interface{}, 0)
+	for k, v := range p.params {
+		arr = append(arr, k)
+		arr = append(arr, v)
+	}
+	return arr
+}
+
 type Commands interface {
-	Ping(message string)
+	Ping(message string) (bool, error)
 	Set(key, value string)
 	SetWithParams(key, value string, params SetParams)
 	Get(key string)
@@ -97,14 +350,14 @@ type Commands interface {
 	IncrByFloat(key string, increment float64)
 	Incr(key string)
 	Append(key string, value string)
-	Substr(key string, start,  end int64)
+	Substr(key string, start, end int64)
 	Hset(key string, field string, value string)
 	Hget(key string, field string)
-	HsetBatch(key string,  hash g.MapStrStr)
+	HsetBatch(key string, hash map[string]string)
 	Hsetnx(key string, field string, value string)
-	Hmset(key string,  hash g.MapStrStr)
+	Hmset(key string, hash map[string]string)
 	Hmget(key string, fields ...string)
-	HincrBy(key string, field string,  value int64)
+	HincrBy(key string, field string, value int64)
 	HincrByFloat(key string, field string, value float64)
 	Hexists(key string, field string)
 	Hdel(key string, fields ...string)
@@ -115,7 +368,7 @@ type Commands interface {
 	Rpush(key string, strings ...string)
 	Lpush(key string, strings ...string)
 	Llen(key string)
-	Lrange(key string, start int64,  stop int64)
+	Lrange(key string, start int64, stop int64)
 	Ltrim(key string, start int64, stop int64)
 	Lindex(key string, index int64)
 	Lset(key string, index int64, value string)
@@ -196,7 +449,7 @@ type Commands interface {
 	//bgsave()
 	//lastsave()
 	//save()
-	ConfigSet( parameter string, value string)
+	ConfigSet(parameter string, value string)
 	ConfigGet(pattern string)
 	ConfigResetStat()
 	Multi()

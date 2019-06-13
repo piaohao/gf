@@ -14,7 +14,6 @@
 package gredis
 
 import (
-	"github.com/gogf/gf/g"
 	"github.com/gogf/gf/g/container/garray"
 	"github.com/gogf/gf/g/util/gconv"
 )
@@ -104,7 +103,7 @@ func (r *Redis) Scan(startIndex int64, pattern string) (int64, []string, error) 
 	}
 	results := v.Interfaces()
 	if len(results) != 2 {
-		return 0, g.SliceStr{}, nil
+		return 0, []string{}, nil
 	}
 	return gconv.Int64(results[0]), gconv.Strings(results[1]), nil
 }
@@ -288,7 +287,7 @@ func (r *Redis) HScan(key string, startIndex int64, pattern string) (int64, []st
 	}
 	results := v.Interfaces()
 	if len(results) != 2 {
-		return 0, g.SliceStr{}, nil
+		return 0, []string{}, nil
 	}
 	return gconv.Int64(results[0]), gconv.Strings(results[1]), nil
 }
@@ -330,7 +329,7 @@ func (r *Redis) HGet(key string, field string) (string, error) {
 }
 
 // HGetAll retrieves the key
-func (r *Redis) HGetAll(key string) (g.Map, error) {
+func (r *Redis) HGetAll(key string) (map[string]interface{}, error) {
 	v, err := r.DoVar(hGetAllCmd, key)
 	if err != nil {
 		return nil, err
@@ -460,7 +459,7 @@ func (r *Redis) LLen(key string) (int64, error) {
 	return v.Int64(), nil
 }
 
-func (r *Redis) LRange(key string, start, end int64) (g.SliceStr, error) {
+func (r *Redis) LRange(key string, start, end int64) ([]string, error) {
 	v, err := r.DoVar("LRange", key, start, end)
 	if err != nil {
 		return nil, err
